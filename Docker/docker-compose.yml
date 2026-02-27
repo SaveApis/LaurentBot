@@ -11,8 +11,6 @@
       - "8080:8080"
   bot:
     depends_on:
-      backend:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     image: laurent-bot-bot:dev
