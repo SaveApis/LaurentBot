@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ printf "%s-backend" .Release.Name }}
 spec:
-  {{ if required .Values.backend.replica.enabled }}
+  {{ if .Values.backend.replica.enabled | default false }}
   replicas: {{ .Values.backend.replica.count }}
   {{ else }}
   replicas: 1
@@ -29,4 +29,18 @@ spec:
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
       restartPolicy: Always
