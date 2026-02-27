@@ -16,16 +16,22 @@ public class SerilogModule(string applicationName) : Module
 
         collection.AddSerilog((provider, loggerConfiguration) =>
             {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+
                 var environment = provider.GetRequiredService<IHostEnvironment>();
                 var isDevelopment = environment.IsDevelopment();
 
+                var minimumLevels = configuration.GetSection("Logging:MinimumLevels").Get<Dictionary<string, LogEventLevel>>() ?? [];
                 loggerConfiguration.MinimumLevel.Verbose();
+                foreach (var (namespacePrefix, level) in minimumLevels)
+                {
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, level);
+                }
                 loggerConfiguration.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
 
                 loggerConfiguration.WriteTo.Console(LogEventLevel.Verbose, "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}");
                 if (!isDevelopment)
                 {
-                    var configuration = provider.GetRequiredService<IConfiguration>();
                     var token = configuration["BetterStack:Token"] ?? throw new InvalidOperationException("BetterStack token is not configured.");
                     var host = configuration["BetterStack:Host"] ?? throw new InvalidOperationException("BetterStack host is not configured.");
 
