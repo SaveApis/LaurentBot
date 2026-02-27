@@ -29,6 +29,10 @@ spec:
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"
+            - name: BetterStack__Host
+              value: {{ required "BetterStack Host is required" .Values.logging.betterstack.host }}
+            - name: BetterStack__Token
+              value: {{ required "BetterStack Token is required" .Values.logging.betterstack.token }}
           readinessProbe:
             httpGet:
               path: /health
