@@ -35,6 +35,11 @@ frontend:
       host: "laurentbot.saveapis.de"
 
 logging:
+  minimumLevels:
+    - name: "Microsoft_AspNetCore"
+      level: "Warning"
+    - name: "Microsoft_Extensions_Diagnostics"
+      level: "Information"
   betterstack:
     host: ""
     token: ""
