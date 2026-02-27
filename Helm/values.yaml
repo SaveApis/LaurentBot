@@ -6,3 +6,30 @@ rabbitmq:
   auth:
     user: ""
     password: ""
+
+backend:
+  replica:
+    enabled: true
+    count: 3
+  image:
+    name: "registry.digitalocean.com/saveapis/laurentbot-backend"
+    tag: ""
+  http:
+    route:
+      host: "api.laurentbot.saveapis.de"
+
+bot:
+  image:
+    name: "registry.digitalocean.com/saveapis/laurentbot-bot"
+    tag: ""
+
+frontend:
+  replica:
+    enabled: true
+    count: 3
+  image:
+    name: "registry.digitalocean.com/saveapis/laurentbot-frontend"
+    tag: ""
+  http:
+    route:
+      host: "laurentbot.saveapis.de"
