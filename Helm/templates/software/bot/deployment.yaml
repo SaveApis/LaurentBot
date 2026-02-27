@@ -1,0 +1,25 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-bot" .Release.Name }}
+  labels:
+    app: {{ printf "%s-bot" .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ printf "%s-bot" .Release.Name }}
+  template:
+    metadata:
+      name: {{ printf "%s-bot" .Release.Name }}
+      labels:
+        app: {{ printf "%s-bot" .Release.Name }}
+    spec:
+      containers:
+        - name: {{ printf "%s-bot" .Release.Name }}
+          image: {{ required "Bot image name is required" .Values.bot.image.name }}:{{ required "Bot image tag is required" .Values.bot.image.tag }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+      restartPolicy: Always

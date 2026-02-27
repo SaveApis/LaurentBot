@@ -1,0 +1,45 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-frontend" .Release.Name }}
+  labels:
+    app: {{ printf "%s-frontend" .Release.Name }}
+spec:
+  {{ if .Values.frontend.replica.enabled | default false }}
+  replicas: {{ .Values.frontend.replica.count }}
+  {{ else }}
+  replicas: 1
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ printf "%s-frontend" .Release.Name }}
+  template:
+    metadata:
+      name: {{ printf "%s-frontend" .Release.Name }}
+      labels:
+        app: {{ printf "%s-frontend" .Release.Name }}
+    spec:
+      containers:
+        - name: {{ printf "%s-frontend" .Release.Name }}
+          image: {{ required "Frontend image name is required" .Values.frontend.image.name }}:{{ required "Frontend image tag is required" .Values.frontend.image.tag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+      restartPolicy: Always
