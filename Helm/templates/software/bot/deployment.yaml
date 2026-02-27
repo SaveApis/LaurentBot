@@ -26,4 +26,8 @@ spec:
               value: {{ required "BetterStack Host is required" .Values.logging.betterstack.host }}
             - name: BetterStack__Token
               value: {{ required "BetterStack Token is required" .Values.logging.betterstack.token }}
+            {{ range .Values.logging.minimumLevels }}
+            - name: Logging__MinimumLevels__{{ .name }}
+              value: {{ .level }}
+            {{ end }}
       restartPolicy: Always

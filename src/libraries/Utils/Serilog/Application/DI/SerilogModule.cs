@@ -25,9 +25,8 @@ public class SerilogModule(string applicationName) : Module
                 loggerConfiguration.MinimumLevel.Verbose();
                 foreach (var (namespacePrefix, level) in minimumLevels)
                 {
-                    loggerConfiguration.MinimumLevel.Override(namespacePrefix, level);
+                    loggerConfiguration.MinimumLevel.Override(namespacePrefix.Replace('_', '.'), level);
                 }
-                loggerConfiguration.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
 
                 loggerConfiguration.WriteTo.Console(LogEventLevel.Verbose, "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}");
                 if (!isDevelopment)
