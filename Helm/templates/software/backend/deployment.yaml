@@ -1,0 +1,32 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-backend" .Release.Name }}
+  labels:
+    app: {{ printf "%s-backend" .Release.Name }}
+spec:
+  {{ if required .Values.backend.replica.enabled }}
+  replicas: {{ .Values.backend.replica.count }}
+  {{ else }}
+  replicas: 1
+  {{ end }}
+  selector:
+    matchLabels:
+      app: {{ printf "%s-backend" .Release.Name }}
+  template:
+    metadata:
+      name: {{ printf "%s-backend" .Release.Name }}
+      labels:
+        app: {{ printf "%s-backend" .Release.Name }}
+    spec:
+      containers:
+        - name: {{ printf "%s-backend" .Release.Name }}
+          image: {{ required "Backend image name is required" .Values.backend.image.name }}:{{ required "Backend image tag is required" .Values.backend.image.tag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+      restartPolicy: Always
