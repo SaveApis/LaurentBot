@@ -1,0 +1,45 @@
+﻿services:
+  backend:
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    image: laurent-bot-backend:dev
+    build:
+      context: ..
+      dockerfile: src/Backend/Dockerfile
+    ports:
+      - "8080:8080"
+  bot:
+    depends_on:
+      backend:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    image: laurent-bot-bot:dev
+    build:
+      context: ..
+      dockerfile: src/Bot/Dockerfile
+  frontend:
+    image: laurent-bot-frontend:dev
+    build:
+      context: ../src/Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:8080"
+  rabbitmq:
+    image: rabbitmq:4.2.4-alpine
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: laurentbot
+      RABBITMQ_DEFAULT_PASS: laurentbot
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 1s
+      timeout: 5s
+      retries: 50
+
+volumes:
+  rabbitmq_data:
