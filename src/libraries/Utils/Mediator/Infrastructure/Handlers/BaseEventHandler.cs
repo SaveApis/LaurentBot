@@ -12,14 +12,14 @@ public abstract class BaseEventHandler<THandler, TEvent>(ILogger<THandler> logge
         Logger.LogInformation("Received event '{Event}' for handler '{Handler}'", typeof(TEvent).Name, typeof(THandler).Name);
 
         Logger.LogTrace("Checking if event '{Event}' is supported by handler '{Handler}'", typeof(TEvent).Name, typeof(THandler).Name);
-        if (!await SupportAsync(notification, cancellationToken))
+        if (!await SupportAsync(notification, cancellationToken).ConfigureAwait(false))
         {
             Logger.LogInformation("Event '{Event}' is not supported by handler '{Handler}'. Skipping.", typeof(TEvent).Name, typeof(THandler).Name);
             return;
         }
 
         Logger.LogTrace("Handling event '{Event}' with handler '{Handler}'", typeof(TEvent).Name, typeof(THandler).Name);
-        await HandleAsync(notification, cancellationToken);
+        await HandleAsync(notification, cancellationToken).ConfigureAwait(false);
     }
 
     protected virtual Task<bool> SupportAsync(TEvent notification, CancellationToken cancellationToken)

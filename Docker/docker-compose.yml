@@ -13,11 +13,11 @@
       Logging__MinimumLevels__Microsoft_AspNetCore: Warning
       Logging__MinimumLevels__Microsoft_EntityFrameworkCore: Information
       Logging__MinimumLevels__Microsoft_Extensions_Diagnostics: Information
-      Database__backend_core__Host: postgres
-      Database__backend_core__Port: 5432
-      Database__backend_core__Database: laurentbot-backend
-      Database__backend_core__User: laurentbot
-      Database__backend_core__Password: laurentbot
+      Database__backend__Host: postgres
+      Database__backend__Port: 5432
+      Database__backend__Database: laurentbot-backend
+      Database__backend__User: laurentbot
+      Database__backend__Password: laurentbot
     ports:
       - "8080:8080"
   bot:

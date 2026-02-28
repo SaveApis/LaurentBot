@@ -39,10 +39,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI(options => options.SupportedSubmitMethods());
 
 await app.RunWithEventAsync().ConfigureAwait(false);

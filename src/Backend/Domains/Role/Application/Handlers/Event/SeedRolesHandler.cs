@@ -1,6 +1,7 @@
 ﻿using Backend.Domains.Role.Application.Mapping;
 using Backend.Domains.Role.Application.Services;
 using Backend.Domains.Role.Infrastructure.Roles;
+using Backend.Persistence.Sql.Context;
 using Utils.EntityFramework.Application.Events;
 using Utils.Mediator.Infrastructure.Handlers;
 
@@ -8,12 +9,17 @@ namespace Backend.Domains.Role.Application.Handlers.Event;
 
 public class SeedRolesHandler(ILogger<SeedRolesHandler> logger, IRoleService service, IRoleMapper mapper, IEnumerable<IRole> roles) : BaseEventHandler<SeedRolesHandler, MigrationCompletedEvent>(logger)
 {
+    protected override bool Support(MigrationCompletedEvent notification)
+    {
+        return notification.ContextType == typeof(CoreDbContext);
+    }
+
     protected override async Task HandleAsync(MigrationCompletedEvent notification, CancellationToken cancellationToken)
     {
         Logger.LogInformation("Start seeding roles...");
 
         Logger.LogDebug("Getting existing roles from database and code...");
-        var dbRoles = await service.GetAllAsync(cancellationToken);
+        var dbRoles = await service.GetAllAsync(cancellationToken).ConfigureAwait(false);
         var codeRoles = roles.ToList();
 
         Logger.LogTrace("Extract keys and compare...");
@@ -30,7 +36,7 @@ public class SeedRolesHandler(ILogger<SeedRolesHandler> logger, IRoleService ser
         var removeTask = RemoveAsync(toRemove, cancellationToken);
         var updateTask = UpdateAsync(codeRoles, toUpdate, cancellationToken);
 
-        await Task.WhenAll(addTask, removeTask, updateTask);
+        await Task.WhenAll(addTask, removeTask, updateTask).ConfigureAwait(false);
 
         Logger.LogInformation("Roles seeding completed. Added: {AddCount}, Removed: {RemoveCount}, Updated: {UpdateCount}", toAdd.Count, toRemove.Count, toUpdate.Count);
     }
