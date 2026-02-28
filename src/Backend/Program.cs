@@ -1,11 +1,19 @@
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Utils.Mediator.Application.DI;
+using Utils.Mediator.Application.Extensions;
 using Utils.Serilog.Application.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-    .ConfigureContainer<ContainerBuilder>((context, containerBuilder) => containerBuilder.RegisterModule(new SerilogModule("Backend")));
+    .ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
+        {
+            containerBuilder.RegisterModule(new SerilogModule("Backend"));
+            containerBuilder.RegisterModule(new MediatorModule(Assembly.GetExecutingAssembly()));
+        }
+    );
 
 builder.Services.AddControllers();
 
@@ -23,5 +31,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await app.StartAsync().ConfigureAwait(false);
-await app.WaitForShutdownAsync().ConfigureAwait(false);
+await app.RunWithEventAsync().ConfigureAwait(false);
