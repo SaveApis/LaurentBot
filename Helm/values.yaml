@@ -51,3 +51,9 @@ logging:
 
 database:
   profiles:
+    backend:
+      host: ""
+      port: 5432
+      database: "laurentbot"
+      user: ""
+      password: ""
