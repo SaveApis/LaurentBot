@@ -14,6 +14,9 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
             containerBuilder.RegisterModule(new MediatorModule(Assembly.GetExecutingAssembly()));
         }
     );
+builder.Services.RegisterDbContext<CoreDbContext>("backend");
+
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 
@@ -30,5 +33,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 await app.RunWithEventAsync().ConfigureAwait(false);
