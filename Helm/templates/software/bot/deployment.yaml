@@ -30,4 +30,16 @@ spec:
             - name: Logging__MinimumLevels__{{ .name }}
               value: {{ .level }}
             {{ end }}
+            {{ range $key, $value := .Values.database.profiles }}
+            - name: Database__{{ $key }}__Host
+              value: {{ required (printf "Database profile %s host is required" $key) $value.host | quote }}
+            - name: Database__{{ $key }}__Port
+              value: {{ required (printf "Database profile %s port is required" $key) $value.port | quote }}
+            - name: Database__{{ $key }}__Database
+              value: {{ required (printf "Database profile %s database is required" $key) $value.database | quote }}
+            - name: Database__{{ $key }}__User
+              value: {{ required (printf "Database profile %s user is required" $key) $value.user | quote }}
+            - name: Database__{{ $key }}__Password
+              value: {{ required (printf "Database profile %s password is required" $key) $value.password | quote }}
+            {{ end }}
       restartPolicy: Always
