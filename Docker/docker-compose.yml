@@ -3,20 +3,32 @@
     depends_on:
       rabbitmq:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     image: laurent-bot-backend:dev
     build:
       context: ..
       dockerfile: src/Backend/Dockerfile
+    environment:
+      Logging__MinimumLevels__Microsoft_AspNetCore: Warning
+      Logging__MinimumLevels__Microsoft_EntityFrameworkCore: Information
+      Logging__MinimumLevels__Microsoft_Extensions_Diagnostics: Information
     ports:
       - "8080:8080"
   bot:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     image: laurent-bot-bot:dev
     build:
       context: ..
       dockerfile: src/Bot/Dockerfile
+    environment:
+      Logging__MinimumLevels__Microsoft_AspNetCore: Warning
+      Logging__MinimumLevels__Microsoft_EntityFrameworkCore: Information
+      Logging__MinimumLevels__Microsoft_Extensions_Diagnostics: Information
   frontend:
     image: laurent-bot-frontend:dev
     build:
@@ -38,6 +50,21 @@
       interval: 1s
       timeout: 5s
       retries: 50
+  postgres:
+    image: postgres:18.3-alpine3.23
+    environment:
+      POSTGRES_USER: laurentbot
+      POSTGRES_PASSWORD: laurentbot
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "laurentbot" ]
+      interval: 1s
+      timeout: 5s
+      retries: 50
 
 volumes:
   rabbitmq_data:
+  postgres_data:
