@@ -1,6 +1,9 @@
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Backend.Domains.Role.Application.DI;
+using Backend.Persistence.Sql.Context;
+using Utils.EntityFramework.Application.Extensions;
 using Utils.Mediator.Application.DI;
 using Utils.Mediator.Application.Extensions;
 using Utils.Serilog.Application.DI;
@@ -12,6 +15,8 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
         {
             containerBuilder.RegisterModule(new SerilogModule("Backend"));
             containerBuilder.RegisterModule(new MediatorModule(Assembly.GetExecutingAssembly()));
+
+            containerBuilder.RegisterModule(new RoleModule());
         }
     );
 builder.Services.RegisterDbContext<CoreDbContext>("backend");
