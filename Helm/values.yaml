@@ -43,6 +43,11 @@ logging:
       level: "Warning"
     - name: "Microsoft_Extensions_Diagnostics"
       level: "Information"
+    - name: "Microsoft_EntityFrameworkCore"
+      level: "Information"
   betterstack:
     host: ""
     token: ""
+
+database:
+  profiles:

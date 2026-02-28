@@ -19,9 +19,9 @@ public static class ServiceCollectionExtension
                     var environment = provider.GetRequiredService<IHostEnvironment>();
                     
                     var host = configuration.GetValue<string>($"Database:{selector}:Host") ?? throw new InvalidOperationException($"Database:{selector}:Host is not configured.");
-                    var port = configuration.GetValue<int>($"Database:{selector}:Port");
+                    var port = configuration.GetValue<int?>($"Database:{selector}:Port") ?? throw new InvalidOperationException($"Database:{selector}:Port is not configured.");
                     var database = configuration.GetValue<string>($"Database:{selector}:Database") ?? throw new InvalidOperationException($"Database:{selector}:Database is not configured.");
-                    var username = configuration.GetValue<string>($"Database:{selector}:Username") ?? throw new InvalidOperationException($"Database:{selector}:Username is not configured.");
+                    var username = configuration.GetValue<string>($"Database:{selector}:User") ?? throw new InvalidOperationException($"Database:{selector}:Username is not configured.");
                     var password = configuration.GetValue<string>($"Database:{selector}:Password") ?? throw new InvalidOperationException($"Database:{selector}:Password is not configured.");
 
                     var connectionStringBuilder = new NpgsqlConnectionStringBuilder

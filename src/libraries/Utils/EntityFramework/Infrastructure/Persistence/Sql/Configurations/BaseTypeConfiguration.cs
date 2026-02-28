@@ -9,8 +9,14 @@ public abstract class BaseTypeConfiguration<TEntity> : IEntityTypeConfiguration<
     protected abstract string TableName { get; }
 
     protected abstract void ConfigureProperties(EntityTypeBuilder<TEntity> builder);
-    protected abstract void ConfigureIndexes(EntityTypeBuilder<TEntity> builder);
-    protected abstract void ConfigureRelationships(EntityTypeBuilder<TEntity> builder);
+
+    protected virtual void ConfigureIndexes(EntityTypeBuilder<TEntity> builder)
+    {
+    }
+
+    protected virtual void ConfigureRelationships(EntityTypeBuilder<TEntity> builder)
+    {
+    }
 
     public void Configure(EntityTypeBuilder<TEntity> builder)
     {
@@ -19,7 +25,7 @@ public abstract class BaseTypeConfiguration<TEntity> : IEntityTypeConfiguration<
 
         builder.Property(x => x.Id).HasColumnName("id").IsRequired();
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
-        builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
+        builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired(false);
         builder.Property(x => x.Version).HasColumnName("version").IsRequired();
         ConfigureProperties(builder);
         ConfigureIndexes(builder);
