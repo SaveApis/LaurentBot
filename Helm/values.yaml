@@ -1,6 +1,9 @@
 gateway:
   enabled: true
   className: cilium
+  tls:
+    email: ""
+    enabled: false
 
 rabbitmq:
   auth:

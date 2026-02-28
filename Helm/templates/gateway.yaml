@@ -3,6 +3,11 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ printf "%s-gateway" .Release.Name }}
+
+  {{ if .Values.gateway.tls.enabled }}
+  annotations:
+    cert-manager.io/issuer: {{ printf "%s-issuer" .Release.Name }}
+  {{ end }}
 spec:
   gatewayClassName: {{ .Values.gateway.className }}
   listeners:
@@ -12,4 +17,30 @@ spec:
       allowedRoutes:
         namespaces:
           from: Same
+    {{ if .Values.gateway.tls.enabled }}
+    - protocol: HTTPS
+      hostname: "laurentbot.saveapis.de"
+      port: 443
+      name: https-frontend
+      allowedRoutes:
+        namespaces:
+          from: Same
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: {{ printf "%s-tls" .Release.Name }}
+    - protocol: HTTPS
+      hostname: "api.laurentbot.saveapis.de"
+      port: 443
+      name: https-backend
+      allowedRoutes:
+        namespaces:
+          from: Same
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: {{ printf "%s-tls" .Release.Name }}
+      {{ end }}
 {{ end }}
