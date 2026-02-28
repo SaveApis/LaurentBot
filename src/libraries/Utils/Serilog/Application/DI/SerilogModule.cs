@@ -38,6 +38,7 @@ public class SerilogModule(string applicationName) : Module
                 }
 
                 loggerConfiguration.Enrich.WithProperty("Application", applicationName);
+                loggerConfiguration.Enrich.WithProperty("Host", Environment.MachineName);
             }
         );
 
